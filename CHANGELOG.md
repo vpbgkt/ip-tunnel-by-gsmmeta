@@ -5,6 +5,25 @@ All notable changes to IP Tunnel by GsmMeta will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-01-01
+
+### Added
+- 📋 **Logs Viewer** - New logs window showing application activity and errors
+- 🔍 **Event Logging** - All major events (connections, errors, key generation) are logged
+- 📝 **Log Management** - Copy logs to clipboard or clear logs
+- ↔️ **Resizable Window** - Window can now be expanded/shrunk as needed
+- 🔗 **Clickable Link** - www.GsmMeta.com link in footer opens in browser
+- ⚙️ **Enhanced Error Tracking** - All errors captured in logs with timestamps
+
+### Changed
+- 🏷️ **Branding Update** - Changed "GsmMeta" to "GsmMeta.com" throughout
+- 📐 **Window Constraints** - Minimum size set to 320x200, fully resizable
+- 🎨 **UI Layout** - Settings and Logs buttons side-by-side in connection view
+
+### Fixed
+- ✅ Save button visibility in setup view
+- ✅ Removed stray code causing errors
+
 ## [1.0.0] - 2026-01-01
 
 ### Added
@@ -55,11 +74,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned Features
 - System tray integration
 - Auto-reconnect with exponential backoff
-- Connection logs viewer
 - Multiple tunnel profiles
 - Linux/Mac support
 - Toast notifications
 - Connection statistics
+- Export logs to file
 
 ---
 

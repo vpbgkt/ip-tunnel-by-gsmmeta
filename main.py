@@ -29,7 +29,15 @@ class IPTunnelApp(ctk.CTk):
         # Window configuration
         self.title("IP Tunnel by GsmMeta.com")
         self.geometry("320x200")
-        self.resizable(False, False)
+        self.resizable(True, True)
+        self.minsize(320, 200)
+        
+        # Log storage (initialize before setup_logging)
+        self.logs = []
+        self.max_logs = 500  # Keep last 500 log entries
+        
+        # Setup logging
+        self.setup_logging()
         
         # Set window icon
         self.set_window_icon()
@@ -64,6 +72,25 @@ class IPTunnelApp(ctk.CTk):
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f'{width}x{height}+{x}+{y}')
     
+    def setup_logging(self):
+        """Setup logging system."""
+        import datetime
+        self.log("Application started", "INFO")
+    
+    def log(self, message, level="INFO"):
+        """Add log entry with timestamp."""
+        import datetime
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        log_entry = f"[{timestamp}] [{level}] {message}"
+        self.logs.append(log_entry)
+        
+        # Keep only last max_logs entries
+        if len(self.logs) > self.max_logs:
+            self.logs = self.logs[-self.max_logs:]
+        
+        # Print to console for debugging
+        print(log_entry)
+    
     def set_window_icon(self):
         """Set window icon from logo.png if it exists."""
         try:
@@ -75,8 +102,9 @@ class IPTunnelApp(ctk.CTk):
                 # Set window icon
                 icon_image = Image.open(logo_path)
                 self.iconphoto(True, ctk.CTkImage(light_image=icon_image, size=(32, 32))._light_image)
+                self.log("Window icon loaded successfully", "INFO")
         except Exception as e:
-            # Silently fail if icon cannot be set
+            self.log(f"Failed to load window icon: {str(e)}", "WARNING")
             pass
     
     def load_view(self):
@@ -262,16 +290,31 @@ class IPTunnelApp(ctk.CTk):
         )
         self.toggle_btn.pack(pady=5)
         
-        # Settings button (smaller, bottom)
+        # Bottom buttons frame
+        bottom_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
+        bottom_frame.pack(pady=(10, 5))
+        
+        # Settings button
         settings_btn = ctk.CTkButton(
-            self.main_frame,
+            bottom_frame,
             text="⚙ Settings",
             command=self.show_settings,
-            width=90,
+            width=85,
             height=22,
             font=("Arial", 9)
         )
-        settings_btn.pack(pady=(10, 5))
+        settings_btn.pack(side="left", padx=2)
+        
+        # Logs button
+        logs_btn = ctk.CTkButton(
+            bottom_frame,
+            text="📋 Logs",
+            command=self.show_logs,
+            width=85,
+            height=22,
+            font=("Arial", 9)
+        )
+        logs_btn.pack(side="left", padx=2)
         
         # Check if should auto-connect
         if self.config_manager.get_auto_connect():
@@ -279,6 +322,8 @@ class IPTunnelApp(ctk.CTk):
     
     def generate_ssh_key(self):
         """Generate SSH key pair."""
+        self.log("SSH key generation initiated", "INFO")
+        
         # Check if keys exist
         if self.ssh_manager.check_ssh_keys_exist():
             response = messagebox.askyesno(
@@ -286,21 +331,26 @@ class IPTunnelApp(ctk.CTk):
                 "SSH keys already exist. Do you want to regenerate them?\n\nWarning: This will overwrite existing keys."
             )
             if not response:
+                self.log("SSH key regeneration cancelled by user", "INFO")
                 return
             
             # Delete existing keys
             success, msg = self.ssh_manager.delete_existing_keys()
             if not success:
+                self.log(f"Failed to delete existing keys: {msg}", "ERROR")
                 messagebox.showerror("Error", msg)
                 return
+            self.log("Existing SSH keys deleted", "INFO")
         
         # Generate new keys
         success, message = self.ssh_manager.generate_ssh_key()
         
         if success:
+            self.log("SSH key pair generated successfully", "INFO")
             messagebox.showinfo("Success", message)
             self.load_view()  # Refresh view to show key exists
         else:
+            self.log(f"SSH key generation failed: {message}", "ERROR")
             messagebox.showerror("Error", message)
     
     def copy_public_key(self):
@@ -326,15 +376,19 @@ class IPTunnelApp(ctk.CTk):
         command = self.server_command_text.get("1.0", "end-1c").strip()
         
         if not command:
+            self.log("Attempted to save empty server command", "WARNING")
             messagebox.showwarning("Empty Command", "Please enter the server connection command.")
             return
         
+        self.log(f"Saving server command: {command[:50]}...", "INFO")
         success, message = self.config_manager.set_server_command(command)
         
         if success:
+            self.log("Server command saved successfully", "INFO")
             messagebox.showinfo("Success", "Server command saved successfully!")
             self.load_view()  # Switch to connection view
         else:
+            self.log(f"Failed to save server command: {message}", "ERROR")
             messagebox.showerror("Error", message)
     
     def start_connection(self):
@@ -397,6 +451,7 @@ class IPTunnelApp(ctk.CTk):
         """Toggle connection on/off."""
         if self.connection_manager.is_connected:
             # Disconnect
+            self.log("Disconnection initiated", "INFO")
             self.toggle_btn.configure(state="disabled", text="Disconnecting...")
             
             def disconnect_thread():
@@ -407,6 +462,7 @@ class IPTunnelApp(ctk.CTk):
         else:
             # Connect
             command = self.config_manager.get_server_command()
+            self.log(f"Connection initiated: {command[:50]}...", "INFO")
             self.toggle_btn.configure(state="disabled", text="Connecting...")
             self.status_text.configure(text="Connecting...")
             
@@ -419,6 +475,7 @@ class IPTunnelApp(ctk.CTk):
     def on_connect_result(self, success, message):
         """Handle connection attempt result."""
         if success:
+            self.log("SSH tunnel connected successfully", "INFO")
             self.toggle_btn.configure(
                 state="normal",
                 text="Disconnect from Server",
@@ -426,6 +483,7 @@ class IPTunnelApp(ctk.CTk):
                 hover_color="darkred"
             )
         else:
+            self.log(f"Connection failed: {message}", "ERROR")
             self.toggle_btn.configure(
                 state="normal",
                 text="Connect to Server",
@@ -436,6 +494,11 @@ class IPTunnelApp(ctk.CTk):
     
     def on_disconnect_result(self, success, message):
         """Handle disconnect result."""
+        if success:
+            self.log("Disconnected from server", "INFO")
+        else:
+            self.log(f"Disconnect error: {message}", "ERROR")
+        
         self.toggle_btn.configure(
             state="normal",
             text="Connect to Server",
@@ -475,6 +538,99 @@ class IPTunnelApp(ctk.CTk):
         
         # Update UI in main thread
         self.after(0, update_ui)
+    
+    def show_logs(self):
+        """Show logs viewer window."""
+        logs_window = ctk.CTkToplevel(self)
+        logs_window.title("Application Logs")
+        logs_window.geometry("700x500")
+        
+        # Make modal
+        logs_window.transient(self)
+        logs_window.grab_set()
+        
+        # Title
+        title = ctk.CTkLabel(
+            logs_window,
+            text="Application Logs",
+            font=("Arial", 18, "bold")
+        )
+        title.pack(pady=10)
+        
+        # Info label
+        info = ctk.CTkLabel(
+            logs_window,
+            text="Recent application activity and errors",
+            font=("Arial", 11),
+            text_color="gray"
+        )
+        info.pack(pady=(0, 10))
+        
+        # Logs text area
+        logs_text = ctk.CTkTextbox(
+            logs_window,
+            font=("Consolas", 10),
+            wrap="word"
+        )
+        logs_text.pack(fill="both", expand=True, padx=20, pady=(0, 10))
+        
+        # Insert logs
+        if self.logs:
+            logs_text.insert("1.0", "\n".join(self.logs))
+        else:
+            logs_text.insert("1.0", "No logs available yet.")
+        
+        logs_text.configure(state="disabled")  # Make read-only
+        
+        # Buttons
+        button_frame = ctk.CTkFrame(logs_window, fg_color="transparent")
+        button_frame.pack(pady=10)
+        
+        def copy_logs():
+            """Copy logs to clipboard."""
+            try:
+                import pyperclip
+                pyperclip.copy("\n".join(self.logs))
+                messagebox.showinfo("Success", "Logs copied to clipboard!")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to copy logs: {str(e)}")
+        
+        def clear_logs():
+            """Clear all logs."""
+            response = messagebox.askyesno("Clear Logs", "Are you sure you want to clear all logs?")
+            if response:
+                self.logs.clear()
+                self.log("Logs cleared by user", "INFO")
+                logs_text.configure(state="normal")
+                logs_text.delete("1.0", "end")
+                logs_text.insert("1.0", "\n".join(self.logs))
+                logs_text.configure(state="disabled")
+        
+        copy_btn = ctk.CTkButton(
+            button_frame,
+            text="Copy Logs",
+            command=copy_logs,
+            width=120
+        )
+        copy_btn.pack(side="left", padx=5)
+        
+        clear_btn = ctk.CTkButton(
+            button_frame,
+            text="Clear Logs",
+            command=clear_logs,
+            width=120,
+            fg_color="orange",
+            hover_color="darkorange"
+        )
+        clear_btn.pack(side="left", padx=5)
+        
+        close_btn = ctk.CTkButton(
+            button_frame,
+            text="Close",
+            command=logs_window.destroy,
+            width=120
+        )
+        close_btn.pack(side="left", padx=5)
     
     def show_settings(self):
         """Show settings dialog."""

@@ -52,7 +52,8 @@ def build_executable():
     
     # PyInstaller command
     cmd = [
-        "pyinstaller",
+        sys.executable,
+        "-m", "PyInstaller",
         "--name", app_name,
         "--onefile",  # Single executable file
         "--windowed",  # No console window
