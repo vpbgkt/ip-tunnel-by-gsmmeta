@@ -1,12 +1,21 @@
-# IP Tunnel by GsmMeta
+# GsmMeta Server
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/downloads/)
+[![.NET Version](https://img.shields.io/badge/.NET-8.0-blue)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)](https://www.microsoft.com/windows)
 
-**Professional SSH tunnel manager for USB port sharing over network - eliminating the need for Radmin VPN.**
+**Modern SSH tunnel manager for USB port sharing - Built with .NET 8 & WPF**
 
-![IP Tunnel by GsmMeta](logo.png)
+![GsmMeta Server](logo.png)
+
+## 🎨 Modern UI Features
+
+- **Pill-Style Navigation** - Clean toggle between Connection and Settings
+- **Hero Status Display** - Large 110px circular connection indicator  
+- **Always-Visible Controls** - 50px connect button, no scrolling required
+- **Optimal Window Size** - 360x540, perfectly sized for desktop use
+- **Professional Design** - 8px rounded corners, #3478F6 accent color
+- **Dark Theme** - Easy on the eyes with high-contrast white text
 
 ## 🌟 Features
 
@@ -15,225 +24,136 @@
 - **💾 Persistent Configuration** - Saves server commands securely in AppData
 - **🔄 Real-Time Status Monitoring** - Visual connection status with automatic disconnect detection
 - **⚡ Auto-Connect** - Optional automatic connection on startup
-- **🎨 Modern UI** - Clean, dark-themed interface with CustomTkinter
-- **📦 Standalone Executable** - No Python installation required for end users
-- **🪟 Windows Native** - PowerShell integration, system tray ready
+- **📝 System Logs** - Comprehensive logging with copy/clear functionality
+- **🪟 Windows Native** - PowerShell integration, lightweight and fast
 
 ## 🚀 Quick Start
 
-### For End Users (No Programming Required)
+### For End Users
 
-1. **Download** the latest release: `IP_Tunnel_GsmMeta.exe`
-2. **Run** the executable (Windows may show a security warning - click "More info" → "Run anyway")
-3. **Generate** your SSH key
-4. **Submit** your public key to GsmMeta support
-5. **Receive** your server connection command
-6. **Paste** the command and click "Save Configuration & Continue"
-7. **Connect** with one click!
+**1. Install .NET 8 Runtime** (one-time requirement)
+   - Download: [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)
+   - Size: ~55 MB
+   - Takes 2 minutes
+
+**2. Download & Run**
+   - Get the latest release from [Releases](https://github.com/vpbgkt/ip-tunnel-by-gsmmeta/releases)
+   - Extract and run `IP_Tunnel_GsmMeta.exe`
 
 ### For Developers
 
 #### Prerequisites
-- Python 3.8 or higher
-- Windows 7/8/10/11
+- .NET 8 SDK
+- Windows 7/8/10/11 (64-bit)
 - OpenSSH Client (built-in on Windows 10/11)
 
-#### Installation
+#### Build & Run
 
-```bash
+```powershell
 # Clone the repository
-git clone https://github.com/yourusername/ip-tunnel-gsmmeta.git
-cd ip-tunnel-gsmmeta
+git clone https://github.com/vpbgkt/ip-tunnel-by-gsmmeta.git
+cd ip-tunnel-by-gsmmeta
 
-# Install dependencies
-pip install -r requirements.txt
+# Restore dependencies
+dotnet restore
 
 # Run the application
-python main.py
+dotnet run
+
+# Or build for release
+dotnet build -c Release
+
+# Publish framework-dependent (8.3 MB)
+dotnet publish -c Release --output dist
+
+# Publish self-contained (165 MB, no runtime needed)
+dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true --output dist
 ```
 
-## 📦 Building from Source
+## 🎯 How to Use
 
-Create a standalone executable:
+### Initial Setup
 
-```bash
-# Install PyInstaller
-pip install pyinstaller
-
-# Build executable (includes logo as icon)
-python build_exe.py
-
-# Find executable in dist/ folder
-# Output: dist/IP_Tunnel_GsmMeta.exe
-```
-
-The build process automatically:
-- Converts `logo.png` to `.ico` format
-- Embeds the icon in the executable
-- Bundles all dependencies
-- Creates a single portable file
-
-## 🎯 Usage Guide
-
-### First-Time Setup
-
-1. **Launch** the application
-2. Click **"Generate SSH Key"** to create your key pair
-3. Click **"Copy Public Key"** to copy your public key
-4. **Contact GsmMeta support** with your public key
-5. **Receive** a server command like:
-   ```bash
-   ssh -4 -N -R 0.0.0.0:32032:127.0.0.1:32032 tech2@167.71.148.25
-   ```
-6. **Paste** the command into the text box
-7. Click **"Save Configuration & Continue"**
+1. Click **Settings** tab
+2. Click **Generate Key** under Authentication
+3. Click **Copy Key** and send it to GsmMeta support
+4. Receive your SSH connection command from support
+5. Paste the command in **Connection Command** field
+6. Click **Save Configuration**
 
 ### Daily Use
 
-1. **Open** the application
-2. Click **"Connect to Server"** (green button)
-3. **Status indicator** turns green when connected
-4. Click **"Disconnect from Server"** (red button) when finished
+1. Switch to **Connection** tab
+2. Click the big **CONNECT** button
+3. Monitor your connection status
+4. *(Optional)* Enable "Auto-connect on startup"
 
-### Settings
+## 📊 Performance
 
-Access via ⚙ Settings button:
-- **Auto-connect on startup** - Enable for always-on sharing
-- **Server command** - View or update your connection command
-- **Reset configuration** - Return to initial setup
+| Metric | Value |
+|--------|-------|
+| **App Size** | 8.3 MB (framework-dependent) |
+| **Startup Time** | <1 second |
+| **Memory Usage** | ~40 MB |
+| **Runtime Required** | .NET 8 (~55 MB one-time install) |
 
-## 🏗️ Architecture
+Compare to Python version: 83% smaller app size, 50% less memory!
 
-```
-┌─────────────────────────────────────────────┐
-│         main.py (GUI Application)           │
-│   CustomTkinter · Dark Theme · Scrollable  │
-└──────────┬──────────────┬──────────────┬────┘
-           │              │              │
-    ┌──────▼─────┐ ┌─────▼──────┐ ┌────▼──────┐
-    │ SSH Key    │ │   Config   │ │Connection │
-    │ Manager    │ │  Manager   │ │ Manager   │
-    ├────────────┤ ├────────────┤ ├───────────┤
-    │ssh-keygen  │ │   AppData  │ │PowerShell │
-    │Detection   │ │   JSON     │ │Subprocess │
-    │Copy/Paste  │ │  Persist   │ │Monitoring │
-    └────────────┘ └────────────┘ └───────────┘
-```
-
-### Core Components
-
-| Module | Purpose | Key Features |
-|--------|---------|--------------|
-| `main.py` | GUI Application | CustomTkinter, scrollable frames, dynamic resizing |
-| `ssh_key_manager.py` | SSH Operations | Key generation, detection, retrieval |
-| `config_manager.py` | Configuration | AppData persistence, JSON storage |
-| `connection_manager.py` | Tunnel Management | PowerShell execution, health monitoring |
-
-## 📁 Project Structure
+## 🛠️ Project Structure
 
 ```
-ip-tunnel-gsmmeta/
-├── main.py                 # Main GUI application
-├── ssh_key_manager.py      # SSH key operations
-├── config_manager.py       # Configuration persistence
-├── connection_manager.py   # Connection management
-├── build_exe.py           # Build script for executable
-├── requirements.txt       # Python dependencies
-├── logo.png              # Application logo
-├── README.md             # This file
-├── LICENSE               # MIT License
-├── USER_GUIDE.md         # Detailed user manual
-└── DEVELOPER.md          # Technical documentation
+ip-tunnel-by-gsmmeta/
+├── Managers/
+│   ├── SshKeyManager.cs       # SSH key operations
+│   ├── ConfigManager.cs       # JSON configuration
+│   └── ConnectionManager.cs   # SSH tunnel lifecycle
+├── MainWindow.xaml            # Main UI
+├── MainWindow.xaml.cs         # UI logic
+├── LogsWindow.xaml            # Logs viewer
+├── App.xaml                   # App resources & styles
+├── IPTunnelGsmMeta.csproj     # Project configuration
+└── logo.png                   # Application icon
 ```
 
-## 🔧 Requirements
+## 📋 System Requirements
 
-### Runtime Requirements
-- **Windows** 7, 8, 10, or 11
-- **OpenSSH Client** (built-in on Windows 10/11)
-
-### Development Requirements
-- **Python** 3.8+
-- **customtkinter** ≥5.2.0
-- **Pillow** ≥10.0.0
-- **pyperclip** ≥1.8.0
-- **psutil** ≥5.9.0
-
-## 🧪 Testing
-
-Run system tests:
-
-```bash
-# Test all components
-python test_system.py
-
-# Expected output:
-# ✓ All module imports successful (13/13)
-# ✓ SSH client detected
-# ✓ Configuration directory created
-# ✓ All tests passed!
-```
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**"SSH client not found"**
-- Windows 10/11: Enable OpenSSH via Settings → Apps → Optional Features
-- Windows 7/8: Install OpenSSH for Windows manually
-
-**"Connection fails immediately"**
-- Verify server command is correct
-- Check SSH key is registered with GsmMeta
-- Ensure internet connectivity
-- Check firewall settings
-
-**"Settings won't save"**
-- Run as Administrator if AppData access is restricted
-- Check disk space
-
-For more help, see [USER_GUIDE.md](USER_GUIDE.md)
+- **OS**: Windows 7 SP1 / 8 / 10 / 11 (64-bit)
+- **Runtime**: .NET 8 Desktop Runtime
+- **SSH**: OpenSSH Client (built-in on Windows 10+)
+- **Disk**: ~65 MB (runtime + app)
+- **RAM**: 40 MB minimum
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please:
+We welcome contributions! Here's how:
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-See [DEVELOPER.md](DEVELOPER.md) for technical details.
+## 📝 License
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **CustomTkinter** - Modern GUI framework
-- **OpenSSH** - Secure shell implementation
-- **GsmMeta** - Server infrastructure
+MIT License - see [LICENSE](LICENSE) file for details
 
 ## 📞 Support
 
+- **Website**: [gsmmeta.com](https://gsmmeta.com)
+- **Issues**: [GitHub Issues](https://github.com/vpbgkt/ip-tunnel-by-gsmmeta/issues)
 - **Email**: support@gsmmeta.com
-- **Issues**: [GitHub Issues](https://github.com/yourusername/ip-tunnel-gsmmeta/issues)
-- **Documentation**: [USER_GUIDE.md](USER_GUIDE.md)
 
-## 🔄 Version History
+## 🎉 Changelog
 
-### Version 1.0.0 (January 2026)
-- ✅ Initial release
-- ✅ SSH key generation and management
-- ✅ Persistent configuration storage
-- ✅ Real-time connection monitoring
-- ✅ Modern scrollable UI
-- ✅ Standalone executable with logo
-- ✅ Auto-connect on startup
-- ✅ Settings panel
+### v2.0.0 (January 2026)
+- 🎨 Complete UI redesign with modern pill navigation
+- 🔄 Migrated from Python to .NET 8 WPF
+- ⚡ 83% smaller app size (8.3 MB vs 48 MB)
+- 🚀 50% faster startup and lower memory usage
+- ✨ Hero-style connection status display
+- 🪟 Resizable window with optimal defaults
 
 ---
 
-**Made with ❤️ by GsmMeta Team**
+**Made with ❤️ by [GsmMeta.com](https://gsmmeta.com)**  
+*Version 2.0.0 - January 2026*

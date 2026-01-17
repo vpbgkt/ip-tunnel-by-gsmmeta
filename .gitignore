@@ -1,42 +1,44 @@
-# .gitignore - IP Tunnel by GsmMeta
-
-# Build artifacts
-build/
+# .NET build artifacts
+bin/
+obj/
 dist/
-*.spec
 *.exe
-*.ico
+*.dll
+*.pdb
+*.cache
 
-# Python cache
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 
-# Virtual environments
-venv/
-env/
-ENV/
-.venv
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
 
-# OS files
+# NuGet
+*.nupkg
+**/packages/*
+!**/packages/build/
+
+# Windows
 Thumbs.db
-desktop.ini
-.DS_Store
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
+Desktop.ini
 
 # Logs
 *.log
@@ -44,24 +46,5 @@ logs/
 
 # Temporary files
 *.tmp
-temp/
-
-# Distribution
-*.egg-info/
-.eggs/
-
-# PyInstaller
-*.manifest
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# pyenv
-.python-version
-
-# Package managers
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Keep logo.png in repository
-!logo.png
+*.temp
+~$*

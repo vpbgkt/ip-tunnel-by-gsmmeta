@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <Version>2.0.0</Version>
+    <AssemblyName>IP_Tunnel_GsmMeta</AssemblyName>
+    <Product>GsmMeta Server</Product>
+    <Description>SSH Tunnel Manager for USB Port Sharing - .NET Version</Description>
+    <Copyright>Copyright © 2026 GsmMeta.com</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="logo.png" />
+  </ItemGroup>
+
+</Project>
